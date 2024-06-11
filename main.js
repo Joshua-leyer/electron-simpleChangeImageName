@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
+const fs = require('fs')
 const path = require('node:path')
 
 const desktopPath = path.join(app.getPath('desktop'));
@@ -38,8 +39,24 @@ ipcMain.handle('select-files-dialog', async () => {
   console.log(`对话框选择的文件对象是：`, fileObj)
   const filePath = fileObj.filePaths;
   // 返回路径
-  return filePath[0]
+  // return filePath[0]
+  return readFolder(filePath[0])
 })
+
+/**
+ * readFolder Function
+ */
+function readFolder(filderPath) {
+  try {
+    const entries = fs.readdirSync(filderPath)
+    console.log(`readed file:`, entries)
+    return entries
+  } catch (err) {
+    console.error('Error reading folder:', err);
+    return [];
+  }
+}
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
