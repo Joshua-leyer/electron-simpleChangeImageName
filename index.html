@@ -7,9 +7,59 @@
 </head>
 <body>
   <button id="selectBtn">选择文件夹</button>
+  <button id="changeImgBtn">更换图片</button>
   <br />
   <span>------</span>
-  <div id="file-list"></div>
+  <div id="content">
+    <div id="file-list"> </div>
+    <div id="img-box">
+      <img id="now-img" src="P:\_Web_code\my-electron-filelist\sources\imgtest.jpg" alt="">
+    </div>
+  </div>
 </body>
 <script src="./renderer.js"></script>
+
+<style>
+  #content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  #file-list {
+    background-color: aquamarine;
+  }
+  #file-list input {
+    display: block;
+    width: 300px;
+    height: 40px;
+    margin-bottom: 3px;
+    padding: 10px 15px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  #file-list input:focus {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+  }
+  #img-box {
+    padding: 10px;
+    background-color: antiquewhite;
+    /* max-height: 90vh; */
+    border: 3px solid red;
+    overflow: hidden;
+
+  }
+  #now-img {
+    display: block;
+    object-fit: contain;
+    width: 100%;
+    max-width: 100%;
+    min-width: 42px;
+    height: auto;
+  }
+</style>
 </html>
