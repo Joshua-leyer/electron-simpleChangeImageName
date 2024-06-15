@@ -18,7 +18,9 @@ function ChangeInputFocus(InputElementFocus) {
   // 1. 更新 input focus
   InputElementFocus.focus();
   // 2. 更新 右侧图片
-  
+  // console.log(filesPathDom.innerText + "\\" + InputElementFocus.value)
+  const NewImageFallPath = filesPathDom.innerText + "\\" + InputElementFocus.value
+  updateImg(NewImageFallPath)
 }
 
 function NextInputFocus(currentInput) {
@@ -78,6 +80,7 @@ function updateFilesList(filesList) {
   // })
 }
 
+/** 参数 图片完整路径  */
 function updateImg(imgFallPath) {
   imgDom.src = imgFallPath;
 }
