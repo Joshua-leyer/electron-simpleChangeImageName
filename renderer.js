@@ -11,22 +11,25 @@ let oldInputValue = '';
 function handleInputFocus(event) {
   oldInputValue = event.target.value
   console.log(`${event.target.id} gained focus! and, oldInputValue: ${event.target.value}`);
+  ChangeInputFocus(event.target)
 }
 
 // 因为凡是焦点更换，必然右侧图片也要刷新 。为了便于整合 input 焦点更新 和 右侧图片随之更新，专门用一个函数来处理. 
-function ChangeInputFocus(InputElementFocus) {
+function ChangeInputFocus(getFocusInput) {
+  if (getFocusInput === null) return
   // 1. 更新 input focus
-  InputElementFocus.focus();
+  getFocusInput.focus();
   // 2. 更新 右侧图片
-  // console.log(filesPathDom.innerText + "\\" + InputElementFocus.value)
-  const NewImageFallPath = filesPathDom.innerText + "\\" + InputElementFocus.value
+  // console.log(filesPathDom.innerText + "\\" + getFocusInput.value)
+  const NewImageFallPath = filesPathDom.innerText + "\\" + getFocusInput.value
   updateImg(NewImageFallPath)
 }
 
-function NextInputFocus(currentInput) {
+function NextInputFocus(getFocusInput) {
+  if (getFocusInput === null) return
   // console.log(`现在 imglistDOM 是： `, imgListDom)
   // const nextInput = imgListDom.children[CurrentInputIndex + 1];
-  const nextInput = currentInput.nextElementSibling;
+  const nextInput = getFocusInput.nextElementSibling;
   // console.log(`下一个 input 是: `, nextInput)
   if (nextInput) {
     ChangeInputFocus(nextInput);
@@ -58,6 +61,25 @@ async function handleKeyDown(event) {
   }
 }
 
+function handleSwitchFocus(event) {
+  console.log(`现在 event 是`, event)
+  if (event.key == 'ArrowUp' || event.key === 'ArrowDown') {
+    event.preventDefault();
+    switch (event.key) {
+      case 'ArrowUp':
+        let beforeInput = event.target.previousElementSibling;
+        console.log(`前一个元素是`, beforeInput)
+        ChangeInputFocus(beforeInput)
+        break;
+      case 'ArrowDown':
+        let afterInput = event.target.nextElementSibling;
+        console.log(`后一个元素是`, afterInput)
+        ChangeInputFocus(afterInput)
+        break;
+    }
+  }
+}
+
 function updateFilesList(filesList) {
   imgListDom.innerHTML = '';
   
@@ -72,6 +94,7 @@ function updateFilesList(filesList) {
 
     imgListDom.appendChild(imgPathInputElement)
   })
+  imgListDom.addEventListener('keydown', handleSwitchFocus)
   // 更新图片路径 p 标签
   // filesList.forEach(item => {
   //   let pElement = document.createElement('p')
