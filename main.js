@@ -33,6 +33,7 @@ app.whenReady().then(() => {
   })
 })
 
+// back : [文件夹路径，文件夹下文件名称列表]
 ipcMain.handle('select-files-dialog', async () => {
   const fileObj = await dialog.showOpenDialog(win, {
     defaultPath: DefaultPath,
@@ -41,9 +42,8 @@ ipcMain.handle('select-files-dialog', async () => {
 
   console.log(`对话框选择的文件对象是：`, fileObj)
   const filePath = fileObj.filePaths;
-  // 返回路径 
-  // return filePath[0]
-  return readFolder(filePath[0])
+  const filesList = readFolder(filePath[0])
+  return [filePath[0], filesList]
 })
 
 /**
@@ -51,9 +51,9 @@ ipcMain.handle('select-files-dialog', async () => {
  */
 function readFolder(filderPath) {
   try {
-    const entries = fs.readdirSync(filderPath)
-    console.log(`readed file:`, entries)
-    return entries
+    const filesList = fs.readdirSync(filderPath)
+    console.log(`readed file:`, filesList)
+    return filesList
   } catch (err) {
     console.error('Error reading folder:', err);
     return [];
@@ -71,8 +71,27 @@ ipcMain.handle('select-img-dialog', async () => {
     ]
   })
   console.log(`对话框选择的图片是：`, selectImgObj)
-  const imgPath = selectImgObj.filePaths;
-  return imgPath[0]
+  const imgFallPath = selectImgObj.filePaths;
+  return imgFallPath[0]
+
+})
+// 修改成功后 返回， 新的文件名称。
+ipcMain.handle('change-imgname', async (event, ImageData) => {
+  console.log(`Received data from change-imgname process:`, ImageData)
+  const dir = ImageData[0];
+  const currentImgName = ImageData[2];
+  const oldPath = path.join(dir, ImageData[1]);
+  const newPath = path.join(dir, ImageData[2]);
+
+  try {
+    await fs.promises.rename(oldPath, newPath)
+    console.log(`File renamed sucess: \n ${oldPath} \n >>> \n ${newPath}`)
+    return currentImgName
+
+  } catch (err) {
+    console.log(`change Image Error!`, err)
+    throw new Error('Change Image name Error!');
+  }
 })
 
 app.on('window-all-closed', () => {
