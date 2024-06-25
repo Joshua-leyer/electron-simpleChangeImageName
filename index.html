@@ -6,11 +6,11 @@
   <title>fileList</title>
 </head>
 <body>
-  <button id="selectBtn">选择文件夹</button>
+  <button id="selectFolderBtn">选择文件夹</button>
   <button id="changeImgBtn">更换图片</button>
   <br />
+  <div id="files-path">这里是路径....</div>
   <span>------</span>
-  <div id="files-path">.</div>
   <div id="content">
     <div id="file-list"></div>
     <div id="img-box">
@@ -25,8 +25,22 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
-  #file-list input {
-    display: block;
+  .image-path {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+  .child-left {
+    flex-basis: 80%;
+  }
+  .child-right {
+    flex-basis: 20%;
+  }
+  .image-path .name-extension {
+    /* text-align: center; */
+    padding: 10px;
+  }
+  .image-path input {
     width: 300px;
     height: 40px;
     margin-bottom: 3px;
@@ -38,11 +52,14 @@
     box-sizing: border-box;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
-  #file-list input:focus {
+  .image-path input:focus {
     outline: none;
     border-color: #66afe9;
     box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
   }
+
+
+
   #img-box {
     padding: 10px;
     overflow: hidden;

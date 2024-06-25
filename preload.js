@@ -2,7 +2,7 @@ const { ipcRenderer, contextBridge } = require('electron')
 
 contextBridge.exposeInMainWorld('api', {
   selectFilesDialog: async (callback) => {
-    let filesResult = await ipcRenderer.invoke('select-files-dialog')
+    let filesResult = await ipcRenderer.invoke('select-folder-dialog')
     // console.log(`返回回来的 files 结果:`, filesResult)
     callback(filesResult)
   },
@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('api', {
   changeImgNameAPI: async (ImageData, callback) => {
     // console.log(`changeImageNameAPI 发送给主进程的数据是：\n`, ImageData)
     let backImgNewName = await ipcRenderer.invoke('change-imgname', ImageData)
-    // console.log(`change-imgname 主进程修改名称后返回回来的数据是：`, backImgNewName)
+    console.log(`change-imgname 主进程修改名称后返回回来的数据是：`, backImgNewName)
     callback(backImgNewName)
   }
 })
