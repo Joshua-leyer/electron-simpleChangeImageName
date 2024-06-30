@@ -5,7 +5,7 @@ const path = require('node:path')
 const desktopPath = path.join(app.getPath('desktop'));
 let win;
 
-const DefaultPath = 'P:\_Web_code\my-electron-filelist\sources';
+const DefaultPath = 'P:\_Web_code\my-electron-imageNameChange\sources';
 
 const createWindow = () => {
   win = new BrowserWindow({

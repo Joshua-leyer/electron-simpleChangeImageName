@@ -8,26 +8,33 @@ const filesPathDom = document.querySelector('#files-path');
 
 let oldInputValue = '';
 
-// 鼠标 获取焦点的时候，保存 input 旧的内容
+// 获取焦点做两件事：1.保存当前input内容到oldInputValue ; 2.修改右侧图片为当前 focus 的 input
 function handleInputFocus(event) {
-  oldInputValue = event.target.value
+  // 1. 保存旧名称
+  let currentInput = event.target;
+  oldInputValue = currentInput.value;
+  console.log(`获取焦点 input 执行 focus 函数： `, currentInput)
   // console.log(`${event.target.id} gained focus! and, oldInputValue: ${event.target.value}`);
+  // 2. 修改右侧图片
   changeInputFocus(event.target)
 }
 
 // 因为凡是焦点更换，必然右侧图片也要刷新 。为了便于整合 input 焦点更新 和 右侧图片随之更新，专门用一个函数来处理. 
 function changeInputFocus(getFocusInput) {
   if (getFocusInput === null) return
-  // 1. 更新 input focus
-  console.log(`执行了 focus`)
-  getFocusInput.focus();
-  // 2. 更新 右侧图片
+  //  更新 右侧图片
   // console.log(filesPathDom.innerText + "\\" + getFocusInput.value)
   let Extension = getFocusInput.nextElementSibling.textContent;
   const NewImageFallPath = filesPathDom.innerText + "\\" + getFocusInput.value + Extension
   updateImg(NewImageFallPath)
 }
 
+/** 更新修改右侧展示的图片 参数: [图片完整路径] 。 */
+function updateImg(imgFallPath) {
+  imgDom.src = imgFallPath;
+}
+
+// 整理名称，拆分出后缀
 function SortName(ImageName) {
   let imagename = '';
   let imageExtension = '';
@@ -56,13 +63,13 @@ async function handleKeyAndSwitch(event) {
     switch (event.key) {
       case 'ArrowUp':
         currentInput.value = oldInputValue
-        let beforeInput = document.getElementById(`input-${numberPart - 1}`)
-        changeInputFocus(beforeInput)
+        let previousInput = document.getElementById(`input-${numberPart - 1}`)
+        if (previousInput) previousInput.focus();
         break;
       case 'ArrowDown':
         currentInput.value = oldInputValue
-        let afterInput = document.getElementById(`input-${numberPart + 1}`)
-        changeInputFocus(afterInput)
+        let nextInput = document.getElementById(`input-${numberPart + 1}`)
+        if (nextInput) nextInput.focus();
         break;
     }
   }
@@ -73,9 +80,6 @@ async function handleKeyAndSwitch(event) {
     let currentInputValue = currentInput.value;
     let Extension = currentInput.nextElementSibling.textContent;
     console.log(`${inputId} haved change currentInputValue:`, currentInputValue)
-    // 整理出完整路径
-    // const NewImageFallPath = filesPathDom.innerText + "\\" + currentInput.value + Extension
-    // console.log(`完整路径是：`, NewImageFallPath)
     /* 给主线程发送请求 */
     const ImageData = {
       ImagePath: filesPathDom.innerText,
@@ -83,12 +87,13 @@ async function handleKeyAndSwitch(event) {
       currentInputValue: currentInputValue + Extension
     }
     await window.api.changeImgNameAPI(ImageData, (backImgNewName) => {
-      console.log(`当前修改的 element 是${currentInput}`,`主进程返回的新图片名称是:`, backImgNewName)
+      console.log(`当前修改的 input 是${currentInput}`,`主进程返回的新图片名称是:`, backImgNewName)
       let { imagename, imageExtension} = SortName(backImgNewName)
       currentInput.value = imagename
-      // console.log(`当前input是`, parseInt(currentInput.getAttribute('index')))
     })
-    changeInputFocus(document.getElementById(`input-${numberPart + 1}`))
+    // let NextInput = document.getElementById(`input-${numberPart + 1}`);
+    // if (nextInput) NextInput.focus();
+    document.getElementById(`input-${numberPart + 1}`)?.focus();
   }
 }
 
@@ -132,18 +137,8 @@ function updateFilesList(filesList) {
   // })
 
   imgListDom.addEventListener('keydown', handleKeyAndSwitch)
-  // 更新图片路径 p 标签
-  // filesList.forEach(item => {
-  //   let pElement = document.createElement('p')
-  //   pElement.innerHTML = item
-  //   imgListDom.appendChild(pElement)
-  // })
 }
 
-/** 更新修改右侧展示的图片 参数: [图片完整路径] 。 */
-function updateImg(imgFallPath) {
-  imgDom.src = imgFallPath;
-}
 
 window.addEventListener('DOMContentLoaded',  () => {
   // 选择文件夹
